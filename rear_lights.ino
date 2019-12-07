@@ -17,6 +17,9 @@ void setup() {
  strip.clear();
  strip.show();
 
+// Setting brightness - will be later changed automatically by photo element
+ strip.setBrightness(25);
+
 // Lest fill the colors
  ColorGREEN=strip.Color(255,0,0);
  ColorRED=strip.Color(0,255,0);
