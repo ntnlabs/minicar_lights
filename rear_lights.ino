@@ -9,6 +9,7 @@ uint32_t ColorGREEN;
 uint32_t ColorBLUE;
 uint32_t ColorOFF;
 uint32_t ColorFLASH;
+uint32_t ColorSTART;
 
 // my strip has GREEN - RED - BLUE setup
 
@@ -18,14 +19,15 @@ void setup() {
  strip.show();
 
 // Setting brightness - will be later changed automatically by photo element
- strip.setBrightness(25);
+ strip.setBrightness(100);
 
-// Lest fill the colors
+// Lest fill the colors here and use them anywhere ;)
  ColorGREEN=strip.Color(255,0,0);
  ColorRED=strip.Color(0,255,0);
  ColorBLUE=strip.Color(0,0,255);
  ColorOFF=strip.Color(0,0,0);
  ColorFLASH=strip.Color(40,255,0);
+ ColorSTART=strip.Color(200,50,100);
 }
 
 // Filling the whole strip at once
@@ -47,15 +49,44 @@ void Flashing_Hazard(int Lenght) {
       delay(40);
     }
   FullFill(ColorOFF);
-  delay(550);
+  delay(700);
   }
+}
+
+// This is a fancy startup effect
+void StartMeUp() {
+  FullFill(ColorOFF);
+  int ThisDelay = 200;
+  for(int j=0; j<3; j++) {
+    for(int i=0; i<PIXEL_COUNT; i++) {
+      strip.setPixelColor(i, ColorSTART);
+      if (i>0) {
+        strip.setPixelColor(i-1, ColorOFF);
+      }
+      if (i==0) {
+        strip.setPixelColor(PIXEL_COUNT-1, ColorOFF);
+      }
+      ThisDelay=ThisDelay-5;
+      strip.show();
+      delay(ThisDelay);
+    }
+  }
+  for(int i=0; i<PIXEL_COUNT; i++) {
+    strip.setPixelColor(i, ColorSTART);
+    ThisDelay=ThisDelay-10;
+    strip.show();
+    delay(50);
+  }
+  delay(500);
+  FullFill(ColorOFF);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
 
- Flashing_Hazard(10);
+ StartMeUp();
 
+ delay(1000);
  FullFill(ColorBLUE);
  delay(5000);
 }
