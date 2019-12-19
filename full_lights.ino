@@ -19,8 +19,8 @@ uint32_t ColorOFF;
 uint32_t ColorFLASH;
 uint32_t ColorSTART;
 uint32_t ColorTURN;
-
-// my strip has GREEN - RED - BLUE setup
+uint32_t ColorHEADLIGHTS;
+uint32_t ColorTAILLIGHTS;
 
 void setup() {
  strip_RL.begin();
@@ -43,6 +43,7 @@ void setup() {
  strip_FR.setBrightness(25);
 
 // Lets set the colors here and use them anywhere ;)
+// my strip has GREEN - RED - BLUE setup
  ColorGREEN=strip_RL.Color(255,0,0);
  ColorRED=strip_RL.Color(0,255,0);
  ColorBLUE=strip_RL.Color(0,0,255);
@@ -50,16 +51,17 @@ void setup() {
  ColorFLASH=strip_RL.Color(40,255,0);
  ColorSTART=strip_RL.Color(200,50,100);
  ColorTURN=strip_RL.Color(50,250,0);
+ ColorHEADLIGHTS=strip_RL.Color(200,200,200);
+ ColorTAILLIGHTS=strip_RL.Color(25,250,25);
 
-// Serial.begin(9600);
-// Serial.println("Cool");
 }
 
 // Filling the whole strip at once
-// 0 - both sides
+// 0 - rear
 // 1 - left
 // 2 - right
 // 3 - front+rear
+// 4 - front
 void FullFill_All(int Side, uint32_t PixelColor) {
   switch (Side) {
     case 1:
@@ -95,6 +97,15 @@ void FullFill_All(int Side, uint32_t PixelColor) {
       }
       strip_RL.show();
       strip_RR.show();
+      strip_FL.show();
+      strip_FR.show();
+    break;
+
+    case 4:
+      for(int i=0; i<PIXEL_COUNT_FRONT; i++) {
+        strip_FL.setPixelColor(i, PixelColor);
+        strip_FR.setPixelColor(i, PixelColor);
+      }
       strip_FL.show();
       strip_FR.show();
     break;
@@ -194,15 +205,26 @@ void loop() {
  delay(1000);
 
 // Hazard lights
- Flashing_Hazard(10);
+ Flashing_Hazard(3);
 
 // Left turn signal
- for (int i=0; i<6; i++) {
+ for (int i=0; i<4; i++) {
   Left_Turn();
  }
 
+// Right turn signal
+ for (int i=0; i<4; i++) {
+  Right_Turn();
+ }
 
-// just to know it's over here...
+// Turn on driving lights - daytime
+ FullFill_All(0,ColorTAILLIGHTS);
+ FullFill_All(4,ColorHEADLIGHTS);
+ delay(5000);
+ 
+// Turn on driving lights - nighttime
+
+// just to know it's over here goes calm blue color for 5 secs...
  FullFill_All(3,ColorBLUE);
  delay(5000);
 }
