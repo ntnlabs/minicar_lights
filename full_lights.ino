@@ -3,8 +3,8 @@
 #define PIXEL_COUNT_FRONT 15
 #define PIXEL_PIN_REAR_LEFT 7
 #define PIXEL_PIN_REAR_RIGHT 6
-#define PIXEL_PIN_FRONT_LEFT 8
-#define PIXEL_PIN_FRONT_RIGHT 9
+#define PIXEL_PIN_FRONT_LEFT 9
+#define PIXEL_PIN_FRONT_RIGHT 8
 
 Adafruit_NeoPixel strip_RL = Adafruit_NeoPixel(PIXEL_COUNT_REAR, PIXEL_PIN_REAR_LEFT, NEO_RGB + NEO_KHZ800);
 Adafruit_NeoPixel strip_RR = Adafruit_NeoPixel(PIXEL_COUNT_REAR, PIXEL_PIN_REAR_RIGHT, NEO_RGB + NEO_KHZ800);
@@ -66,14 +66,22 @@ void FullFill_All(int Side, uint32_t PixelColor) {
       for(int i=0; i<PIXEL_COUNT_REAR; i++) {
         strip_RL.setPixelColor(i, PixelColor);
       }
+      for(int i=0; i<PIXEL_COUNT_FRONT; i++) {
+        strip_FL.setPixelColor(i, PixelColor);
+      }
       strip_RL.show();
+      strip_FL.show();
     break;
     
     case 2:
       for(int i=0; i<PIXEL_COUNT_REAR; i++) {
         strip_RR.setPixelColor(i, PixelColor);
       }
+      for(int i=0; i<PIXEL_COUNT_FRONT; i++) {
+        strip_FR.setPixelColor(i, PixelColor);
+      }
       strip_RR.show();
+      strip_FR.show();
     break;
 
     case 3:
@@ -104,15 +112,15 @@ void FullFill_All(int Side, uint32_t PixelColor) {
 
 // This will make a three fast flashes in orange color. This will be turned on by our hazard lights switch, so the Lenght is just for testing
 void Flashing_Hazard(int Lenght) {
-  FullFill_All(0, ColorOFF);
+  FullFill_All(3, ColorOFF);
   for(int i=0; i<Lenght; i++) {
     for(int j=0; j<4; j++) {
-      FullFill_All(0, ColorFLASH);
+      FullFill_All(3, ColorFLASH);
       delay(60);
-      FullFill_All(0, ColorOFF);
+      FullFill_All(3, ColorOFF);
       delay(40);
     }
-  FullFill_All(0, ColorOFF);
+  FullFill_All(3, ColorOFF);
   delay(700);
   }
 }
@@ -183,16 +191,15 @@ void loop() {
 
 // Startup lights
  StartMeUp();
-
  delay(1000);
 
 // Hazard lights
-// Flashig_Hazard(10);
+ Flashing_Hazard(10);
 
 // Left turn signal
-// for (int i=0; i<6; i++) {
-//  Left_Turn();
-// }
+ for (int i=0; i<6; i++) {
+  Left_Turn();
+ }
 
 
 // just to know it's over here...
