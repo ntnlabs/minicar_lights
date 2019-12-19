@@ -52,12 +52,11 @@ void setup() {
  ColorSTART=strip_RL.Color(200,50,100);
  ColorTURN=strip_RL.Color(50,250,0);
  ColorHEADLIGHTS=strip_RL.Color(200,200,200);
- ColorTAILLIGHTS=strip_RL.Color(25,250,25);
-
+ ColorTAILLIGHTS=strip_RL.Color(15,250,15);
 }
 
 // Filling the whole strip at once
-// 0 - rear
+// 0 - rear (default)
 // 1 - left
 // 2 - right
 // 3 - front+rear
@@ -136,7 +135,7 @@ void Flashing_Hazard(int Lenght) {
   }
 }
 
-// Left turn signal
+// Left turn signal, one blink with pause
 void Left_Turn() {
   FullFill_All(1, ColorOFF);
   FullFill_All(1, ColorTURN);
@@ -145,7 +144,7 @@ void Left_Turn() {
   delay(600);
 }
 
-// Right turn signal
+// Right turn signal, one blink with pause
 void Right_Turn() {
   FullFill_All(2, ColorOFF);
   FullFill_All(2, ColorTURN);
@@ -154,7 +153,7 @@ void Right_Turn() {
   delay(600);
 }
 
-// This is a fancy startup effect
+// This is a fancy startup effect, will be played everytime Arduino boots up
 void StartMeUp() {
   int k;
   FullFill_All(3, ColorOFF);
@@ -198,8 +197,6 @@ void StartMeUp() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
 // Startup lights
  StartMeUp();
  delay(1000);
@@ -223,6 +220,10 @@ void loop() {
  delay(5000);
  
 // Turn on driving lights - nighttime
+// ### ToDo ###
+
+// Brake light
+// ### ToDo ###
 
 // just to know it's over here goes calm blue color for 5 secs...
  FullFill_All(3,ColorBLUE);
