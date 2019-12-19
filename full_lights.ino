@@ -139,7 +139,7 @@ void Right_Turn() {
 void StartMeUp() {
   int k;
   FullFill_All(3, ColorOFF);
-  int ThisDelay = 200;
+  int ThisDelay = 250;
   for(int j=0; j<3; j++) {
     for(int i=0; i<PIXEL_COUNT_REAR; i++) {
       if ((j==0) || (j==2)) {
@@ -147,23 +147,12 @@ void StartMeUp() {
       } else {
         k=i;
       }
+      FullFill_All(3, ColorOFF);
       strip_RL.setPixelColor(i, ColorSTART);
       strip_RR.setPixelColor(PIXEL_COUNT_REAR-i-1, ColorSTART);
       strip_FL.setPixelColor(k+2, ColorSTART);
       strip_FR.setPixelColor(PIXEL_COUNT_REAR-k, ColorSTART);
-      if (i>0) {
-        strip_RL.setPixelColor(i-1, ColorOFF);
-        strip_RR.setPixelColor(PIXEL_COUNT_REAR-i, ColorOFF);
-        strip_FL.setPixelColor(k+1, ColorOFF);
-        strip_FR.setPixelColor(PIXEL_COUNT_REAR-k+1, ColorOFF);
-      }
-      if (i==0) {
-        strip_RL.setPixelColor(PIXEL_COUNT_REAR-1, ColorOFF);
-        strip_RR.setPixelColor(0, ColorOFF);
-        strip_FL.setPixelColor(PIXEL_COUNT_REAR+1, ColorOFF);
-        strip_FR.setPixelColor(1, ColorOFF);
-      }
-      ThisDelay=ThisDelay-5;
+      ThisDelay=ThisDelay-6;
       strip_RL.show();
       strip_RR.show();
       strip_FL.show();
@@ -184,7 +173,8 @@ void StartMeUp() {
     strip_FR.show();
     delay(50);
   }
-  delay(500);
+  FullFill_All(3, ColorSTART);
+  delay(1000);
   FullFill_All(3, ColorOFF);
 }
 
