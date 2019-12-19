@@ -50,6 +50,9 @@ void setup() {
  ColorFLASH=strip_RL.Color(40,255,0);
  ColorSTART=strip_RL.Color(200,50,100);
  ColorTURN=strip_RL.Color(50,250,0);
+
+// Serial.begin(9600);
+// Serial.println("Cool");
 }
 
 // Filling the whole strip at once
@@ -134,24 +137,30 @@ void Right_Turn() {
 
 // This is a fancy startup effect
 void StartMeUp() {
+  int k;
   FullFill_All(3, ColorOFF);
   int ThisDelay = 200;
   for(int j=0; j<3; j++) {
     for(int i=0; i<PIXEL_COUNT_REAR; i++) {
+      if ((j==0) || (j==2)) {
+       k=PIXEL_COUNT_REAR-i;
+      } else {
+        k=i;
+      }
       strip_RL.setPixelColor(i, ColorSTART);
       strip_RR.setPixelColor(PIXEL_COUNT_REAR-i-1, ColorSTART);
-      strip_FL.setPixelColor(i+1, ColorSTART);
-      strip_FR.setPixelColor(PIXEL_COUNT_REAR-i, ColorSTART);
+      strip_FL.setPixelColor(k+2, ColorSTART);
+      strip_FR.setPixelColor(PIXEL_COUNT_REAR-k, ColorSTART);
       if (i>0) {
         strip_RL.setPixelColor(i-1, ColorOFF);
         strip_RR.setPixelColor(PIXEL_COUNT_REAR-i, ColorOFF);
-        strip_FL.setPixelColor(i, ColorOFF);
-        strip_FR.setPixelColor(PIXEL_COUNT_REAR-i+1, ColorOFF);
+        strip_FL.setPixelColor(k+1, ColorOFF);
+        strip_FR.setPixelColor(PIXEL_COUNT_REAR-k+1, ColorOFF);
       }
       if (i==0) {
         strip_RL.setPixelColor(PIXEL_COUNT_REAR-1, ColorOFF);
         strip_RR.setPixelColor(0, ColorOFF);
-        strip_FL.setPixelColor(PIXEL_COUNT_REAR, ColorOFF);
+        strip_FL.setPixelColor(PIXEL_COUNT_REAR+1, ColorOFF);
         strip_FR.setPixelColor(1, ColorOFF);
       }
       ThisDelay=ThisDelay-5;
@@ -161,12 +170,13 @@ void StartMeUp() {
       strip_FR.show();
       delay(ThisDelay);
     }
+    FullFill_All(3, ColorOFF);
   }
   for(int i=0; i<PIXEL_COUNT_REAR; i++) {
     strip_RL.setPixelColor(i, ColorSTART);
     strip_RR.setPixelColor(PIXEL_COUNT_REAR-i, ColorSTART);
-    strip_FL.setPixelColor(i+1, ColorSTART);
-    strip_FR.setPixelColor(PIXEL_COUNT_REAR-i+1, ColorSTART);
+    strip_FL.setPixelColor(i+2, ColorSTART);
+    strip_FR.setPixelColor(PIXEL_COUNT_REAR-i, ColorSTART);
     ThisDelay=ThisDelay-10;
     strip_RL.show();
     strip_RR.show();
