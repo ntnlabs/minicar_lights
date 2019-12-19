@@ -8,8 +8,8 @@
 
 Adafruit_NeoPixel strip_RL = Adafruit_NeoPixel(PIXEL_COUNT_REAR, PIXEL_PIN_REAR_LEFT, NEO_RGB + NEO_KHZ800);
 Adafruit_NeoPixel strip_RR = Adafruit_NeoPixel(PIXEL_COUNT_REAR, PIXEL_PIN_REAR_RIGHT, NEO_RGB + NEO_KHZ800);
-//Adafruit_NeoPixel strip_FL = Adafruit_NeoPixel(PIXEL_COUNT_FRONT, PIXEL_PIN_FRONT_LEFT, NEO_RGB + NEO_KHZ800);
-//Adafruit_NeoPixel strip_FR = Adafruit_NeoPixel(PIXEL_COUNT_FRONT, PIXEL_PIN_FRONT_RIGHT, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel strip_FL = Adafruit_NeoPixel(PIXEL_COUNT_FRONT, PIXEL_PIN_FRONT_LEFT, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel strip_FR = Adafruit_NeoPixel(PIXEL_COUNT_FRONT, PIXEL_PIN_FRONT_RIGHT, NEO_RGB + NEO_KHZ800);
 
 // Lets define some global colors
 uint32_t ColorRED;
@@ -29,10 +29,18 @@ void setup() {
  strip_RR.clear();
  strip_RL.show();
  strip_RR.show();
+ strip_FL.begin();
+ strip_FR.begin();
+ strip_FL.clear();
+ strip_FR.clear();
+ strip_FL.show();
+ strip_FR.show();
 
 // Setting brightness - will be later adjusted automatically by a photo element
  strip_RL.setBrightness(25);
  strip_RR.setBrightness(25);
+ strip_FL.setBrightness(25);
+ strip_FR.setBrightness(25);
 
 // Lets set the colors here and use them anywhere ;)
  ColorGREEN=strip_RL.Color(255,0,0);
@@ -48,7 +56,8 @@ void setup() {
 // 0 - both sides
 // 1 - left
 // 2 - right
-void FullFill_Rear(int Side, uint32_t PixelColor) {
+// 3 - front+rear
+void FullFill_All(int Side, uint32_t PixelColor) {
   switch (Side) {
     case 1:
       for(int i=0; i<PIXEL_COUNT_REAR; i++) {
@@ -63,7 +72,22 @@ void FullFill_Rear(int Side, uint32_t PixelColor) {
       }
       strip_RR.show();
     break;
-    
+
+    case 3:
+      for(int i=0; i<PIXEL_COUNT_REAR; i++) {
+        strip_RL.setPixelColor(i, PixelColor);
+        strip_RR.setPixelColor(i, PixelColor);
+      }
+      for(int i=0; i<PIXEL_COUNT_FRONT; i++) {
+        strip_FL.setPixelColor(i, PixelColor);
+        strip_FR.setPixelColor(i, PixelColor);
+      }
+      strip_RL.show();
+      strip_RR.show();
+      strip_FL.show();
+      strip_FR.show();
+    break;
+
     default:
       for(int i=0; i<PIXEL_COUNT_REAR; i++) {
         strip_RL.setPixelColor(i, PixelColor);
@@ -77,69 +101,81 @@ void FullFill_Rear(int Side, uint32_t PixelColor) {
 
 // This will make a three fast flashes in orange color. This will be turned on by our hazard lights switch, so the Lenght is just for testing
 void Flashing_Hazard(int Lenght) {
-  FullFill_Rear(0, ColorOFF);
+  FullFill_All(0, ColorOFF);
   for(int i=0; i<Lenght; i++) {
     for(int j=0; j<4; j++) {
-      FullFill_Rear(0, ColorFLASH);
+      FullFill_All(0, ColorFLASH);
       delay(60);
-      FullFill_Rear(0, ColorOFF);
+      FullFill_All(0, ColorOFF);
       delay(40);
     }
-  FullFill_Rear(0, ColorOFF);
+  FullFill_All(0, ColorOFF);
   delay(700);
   }
 }
 
 // Left turn signal
 void Left_Turn() {
-  FullFill_Rear(1, ColorOFF);
-  FullFill_Rear(1, ColorTURN);
+  FullFill_All(1, ColorOFF);
+  FullFill_All(1, ColorTURN);
   delay(800);
-  FullFill_Rear(1, ColorOFF);
+  FullFill_All(1, ColorOFF);
   delay(600);
 }
 
 // Right turn signal
 void Right_Turn() {
-  FullFill_Rear(2, ColorOFF);
-  FullFill_Rear(2, ColorTURN);
+  FullFill_All(2, ColorOFF);
+  FullFill_All(2, ColorTURN);
   delay(800);
-  FullFill_Rear(2, ColorOFF);
+  FullFill_All(2, ColorOFF);
   delay(600);
 }
 
 // This is a fancy startup effect
 void StartMeUp() {
-  FullFill_Rear(0, ColorOFF);
+  FullFill_All(3, ColorOFF);
   int ThisDelay = 200;
   for(int j=0; j<3; j++) {
     for(int i=0; i<PIXEL_COUNT_REAR; i++) {
       strip_RL.setPixelColor(i, ColorSTART);
       strip_RR.setPixelColor(PIXEL_COUNT_REAR-i-1, ColorSTART);
+      strip_FL.setPixelColor(i+1, ColorSTART);
+      strip_FR.setPixelColor(PIXEL_COUNT_REAR-i, ColorSTART);
       if (i>0) {
         strip_RL.setPixelColor(i-1, ColorOFF);
         strip_RR.setPixelColor(PIXEL_COUNT_REAR-i, ColorOFF);
+        strip_FL.setPixelColor(i, ColorOFF);
+        strip_FR.setPixelColor(PIXEL_COUNT_REAR-i+1, ColorOFF);
       }
       if (i==0) {
         strip_RL.setPixelColor(PIXEL_COUNT_REAR-1, ColorOFF);
         strip_RR.setPixelColor(0, ColorOFF);
+        strip_FL.setPixelColor(PIXEL_COUNT_REAR, ColorOFF);
+        strip_FR.setPixelColor(1, ColorOFF);
       }
       ThisDelay=ThisDelay-5;
       strip_RL.show();
       strip_RR.show();
+      strip_FL.show();
+      strip_FR.show();
       delay(ThisDelay);
     }
   }
   for(int i=0; i<PIXEL_COUNT_REAR; i++) {
     strip_RL.setPixelColor(i, ColorSTART);
     strip_RR.setPixelColor(PIXEL_COUNT_REAR-i, ColorSTART);
+    strip_FL.setPixelColor(i+1, ColorSTART);
+    strip_FR.setPixelColor(PIXEL_COUNT_REAR-i+1, ColorSTART);
     ThisDelay=ThisDelay-10;
     strip_RL.show();
     strip_RR.show();
+    strip_FL.show();
+    strip_FR.show();
     delay(50);
   }
   delay(500);
-  FullFill_Rear(0, ColorOFF);
+  FullFill_All(3, ColorOFF);
 }
 
 void loop() {
@@ -154,20 +190,12 @@ void loop() {
 // Flashig_Hazard(10);
 
 // Left turn signal
- for (int i=0; i<10; i++) {
-  Left_Turn();
- }
+// for (int i=0; i<6; i++) {
+//  Left_Turn();
+// }
 
- delay(1000);
-
-// Right turn signal
- for (int i=0; i<10; i++) {
-  Right_Turn();
- }
-
- delay(1000);
 
 // just to know it's over here...
- FullFill_Rear(0,ColorBLUE);
+ FullFill_All(3,ColorBLUE);
  delay(5000);
 }
