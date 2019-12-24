@@ -21,6 +21,9 @@ uint32_t ColorSTART;
 uint32_t ColorTURN;
 uint32_t ColorHEADLIGHTS;
 uint32_t ColorTAILLIGHTS;
+uint32_t ColorBRAKELIGHT;
+int DayTimeBrightness;
+int NightTimeBrightness;
 
 void setup() {
  strip_RL.begin();
@@ -37,10 +40,13 @@ void setup() {
  strip_FR.show();
 
 // Setting brightness - will be later adjusted automatically by a photo element
- strip_RL.setBrightness(25);
- strip_RR.setBrightness(25);
- strip_FL.setBrightness(25);
- strip_FR.setBrightness(25);
+ DayTimeBrightness=50;
+ NightTimeBrightness=200;
+ 
+ strip_RL.setBrightness(DayTimeBrightness);
+ strip_RR.setBrightness(DayTimeBrightness);
+ strip_FL.setBrightness(DayTimeBrightness);
+ strip_FR.setBrightness(DayTimeBrightness);
 
 // Lets set the colors here and use them anywhere ;)
 // my strip has GREEN - RED - BLUE setup
@@ -51,8 +57,18 @@ void setup() {
  ColorFLASH=strip_RL.Color(40,255,0);
  ColorSTART=strip_RL.Color(200,50,100);
  ColorTURN=strip_RL.Color(50,250,0);
- ColorHEADLIGHTS=strip_RL.Color(200,200,200);
- ColorTAILLIGHTS=strip_RL.Color(15,250,15);
+ ColorHEADLIGHTS=strip_RL.Color(250,250,250);
+ ColorTAILLIGHTS=strip_RL.Color(10,180,10);
+ ColorBRAKELIGHT=strip_RL.Color(0,250,0);
+}
+
+void SetBrightness(int Value) {
+ if (Value>0) {
+  strip_RL.setBrightness(Value);
+  strip_RR.setBrightness(Value);
+  strip_FL.setBrightness(Value);
+  strip_FR.setBrightness(Value);  
+ }
 }
 
 // Filling the whole strip at once
@@ -135,6 +151,18 @@ void Flashing_Hazard(int Lenght) {
   }
 }
 
+// Brake signal, three fast blinks, no pause
+void Brake_Light() {
+  FullFill_All(0, ColorOFF);
+  for(int i=0; i<3; i++) {
+    FullFill_All(0, ColorBRAKELIGHT);
+    delay(100);
+    FullFill_All(0, ColorOFF);
+    delay(80);
+  FullFill_All(0, ColorOFF);
+  }
+}
+
 // Left turn signal, one blink with pause
 void Left_Turn() {
   FullFill_All(1, ColorOFF);
@@ -168,7 +196,7 @@ void StartMeUp() {
       FullFill_All(3, ColorOFF);
       strip_RL.setPixelColor(i, ColorSTART);
       strip_RR.setPixelColor(PIXEL_COUNT_REAR-i-1, ColorSTART);
-      strip_FL.setPixelColor(k+2, ColorSTART);
+      strip_FL.setPixelColor(k, ColorSTART);
       strip_FR.setPixelColor(PIXEL_COUNT_REAR-k, ColorSTART);
       ThisDelay=ThisDelay-6;
       strip_RL.show();
@@ -182,8 +210,8 @@ void StartMeUp() {
   for(int i=0; i<PIXEL_COUNT_REAR; i++) {
     strip_RL.setPixelColor(i, ColorSTART);
     strip_RR.setPixelColor(PIXEL_COUNT_REAR-i, ColorSTART);
-    strip_FL.setPixelColor(i+2, ColorSTART);
-    strip_FR.setPixelColor(PIXEL_COUNT_REAR-i, ColorSTART);
+    strip_FL.setPixelColor(i, ColorSTART);
+    strip_FR.setPixelColor(PIXEL_COUNT_REAR-i+2, ColorSTART);
     ThisDelay=ThisDelay-10;
     strip_RL.show();
     strip_RR.show();
@@ -202,30 +230,37 @@ void loop() {
  delay(1000);
 
 // Hazard lights
- Flashing_Hazard(3);
+// Flashing_Hazard(3);
 
 // Left turn signal
- for (int i=0; i<4; i++) {
-  Left_Turn();
- }
+// for (int i=0; i<4; i++) {
+//  Left_Turn();
+// }
 
 // Right turn signal
- for (int i=0; i<4; i++) {
-  Right_Turn();
- }
+// for (int i=0; i<4; i++) {
+//  Right_Turn();
+// }
 
 // Turn on driving lights - daytime
+ SetBrightness(DayTimeBrightness);
  FullFill_All(0,ColorTAILLIGHTS);
  FullFill_All(4,ColorHEADLIGHTS);
  delay(5000);
  
 // Turn on driving lights - nighttime
-// ### ToDo ###
+// SetBrightness(NightTimeBrightness);
+// FullFill_All(0,ColorTAILLIGHTS);
+// FullFill_All(4,ColorHEADLIGHTS);
+// delay(5000);
 
 // Brake light
-// ### ToDo ###
+ for (int i=0; i<4; i++) {
+  Brake_Light();
+ }
 
-// just to know it's over here goes calm blue color for 5 secs...
+// just to know it's over here -> turn on calm blue color for 5 secs...
+ SetBrightness(25);
  FullFill_All(3,ColorBLUE);
  delay(5000);
 }
