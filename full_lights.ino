@@ -5,6 +5,10 @@
 #define PIXEL_PIN_REAR_RIGHT 6
 #define PIXEL_PIN_FRONT_LEFT 9
 #define PIXEL_PIN_FRONT_RIGHT 8
+#define TOUCH01_VCC_PIN 13
+#define TOUCH01_PIN 12
+#define TOUCH02_VCC_PIN 11
+#define TOUCH02_PIN 10
 
 Adafruit_NeoPixel strip_RL = Adafruit_NeoPixel(PIXEL_COUNT_REAR, PIXEL_PIN_REAR_LEFT, NEO_RGB + NEO_KHZ800);
 Adafruit_NeoPixel strip_RR = Adafruit_NeoPixel(PIXEL_COUNT_REAR, PIXEL_PIN_REAR_RIGHT, NEO_RGB + NEO_KHZ800);
@@ -24,6 +28,9 @@ uint32_t ColorTAILLIGHTS;
 uint32_t ColorBRAKELIGHT;
 int DayTimeBrightness;
 int NightTimeBrightness;
+int touch01_value;
+int touch02_value;
+int running_lights;
 
 void setup() {
  strip_RL.begin();
@@ -60,6 +67,18 @@ void setup() {
  ColorHEADLIGHTS=strip_RL.Color(250,250,250);
  ColorTAILLIGHTS=strip_RL.Color(10,180,10);
  ColorBRAKELIGHT=strip_RL.Color(0,250,0);
+
+ pinMode(TOUCH01_VCC_PIN, OUTPUT);
+ pinMode(TOUCH01_PIN, INPUT);
+ digitalWrite(TOUCH01_VCC_PIN, HIGH); // power ON touch 01 button
+
+ pinMode(TOUCH02_VCC_PIN, OUTPUT);
+ pinMode(TOUCH02_PIN, INPUT);
+ digitalWrite(TOUCH02_VCC_PIN, HIGH); // power ON touch 02 button
+
+ running_lights=0;
+
+// Serial.begin(9600);
 }
 
 void SetBrightness(int Value) {
@@ -225,9 +244,59 @@ void StartMeUp() {
 }
 
 void loop() {
+int prepare_light;
 // Startup lights
- StartMeUp();
- delay(1000);
+// StartMeUp();
+// delay(1000);
+
+ touch01_value = digitalRead(TOUCH01_PIN);
+ touch02_value = digitalRead(TOUCH02_PIN);
+
+ prepare_light=touch01_value+(10*touch02_value);
+ switch (prepare_light) {
+  case 0:
+  break;
+
+  case 1:
+   if (running_lights==10) {
+    digitalWrite(TOUCH02_VCC_PIN, LOW); // power OFF touch 01 button
+   }
+   running_lights=1;
+   Left_Turn();
+   digitalWrite(TOUCH02_VCC_PIN, HIGH); // power ON touch 01 button
+  break;
+
+  case 10:
+   if (running_lights==1) {
+    digitalWrite(TOUCH01_VCC_PIN, LOW); // power OFF touch 01 button
+   }
+   running_lights=10;
+   Right_Turn();
+   digitalWrite(TOUCH01_VCC_PIN, HIGH); // power ON touch 01 button
+  break;
+
+  default:
+  case 11:
+   switch (running_lights) {
+    case 1:
+     digitalWrite(TOUCH01_VCC_PIN, LOW); // power OFF touch 01 button
+     running_lights=10;
+     Right_Turn();
+     digitalWrite(TOUCH01_VCC_PIN, HIGH); // power ON touch 01 button
+    break;
+    
+    case 10:
+     digitalWrite(TOUCH02_VCC_PIN, LOW); // power OFF touch 01 button
+     running_lights=1;
+     Left_Turn();
+     digitalWrite(TOUCH02_VCC_PIN, HIGH); // power ON touch 01 button
+    break;
+    
+    default:
+    break;
+   }
+  break;
+ }
 
 // Hazard lights
 // Flashing_Hazard(3);
@@ -243,10 +312,10 @@ void loop() {
 // }
 
 // Turn on driving lights - daytime
- SetBrightness(DayTimeBrightness);
- FullFill_All(0,ColorTAILLIGHTS);
- FullFill_All(4,ColorHEADLIGHTS);
- delay(5000);
+// SetBrightness(DayTimeBrightness);
+// FullFill_All(0,ColorTAILLIGHTS);
+// FullFill_All(4,ColorHEADLIGHTS);
+// delay(5000);
  
 // Turn on driving lights - nighttime
 // SetBrightness(NightTimeBrightness);
@@ -255,12 +324,13 @@ void loop() {
 // delay(5000);
 
 // Brake light
- for (int i=0; i<4; i++) {
-  Brake_Light();
- }
+// for (int i=0; i<4; i++) {
+//  Brake_Light();
+// }
 
 // just to know it's over here -> turn on calm blue color for 5 secs...
- SetBrightness(25);
- FullFill_All(3,ColorBLUE);
- delay(5000);
+// SetBrightness(25);
+// FullFill_All(3,ColorBLUE);
+// digitalWrite(TOUCH01_VCC_PIN, LOW); // power OFF touch 01 button
+// delay(5000);
 }
