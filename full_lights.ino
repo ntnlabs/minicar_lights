@@ -78,7 +78,8 @@ void setup() {
 
  running_lights=0;
 
-// Serial.begin(9600);
+// Startup lights
+ StartMeUp();
 }
 
 void SetBrightness(int Value) {
@@ -245,18 +246,21 @@ void StartMeUp() {
 
 void loop() {
 int prepare_light;
-// Startup lights
-// StartMeUp();
-// delay(1000);
 
+// Lets read both buttons
  touch01_value = digitalRead(TOUCH01_PIN);
  touch02_value = digitalRead(TOUCH02_PIN);
 
+// We will put both values in single variable for easier evaluation
  prepare_light=touch01_value+(10*touch02_value);
+
+// Lets switch the lights on...
  switch (prepare_light) {
   case 0:
   break;
 
+// If button 1 is pressed, and button 2 was active we turn off button 2 (just
+// because of the backlight) and turn on button 1 lights
   case 1:
    if (running_lights==10) {
     digitalWrite(TOUCH02_VCC_PIN, LOW); // power OFF touch 01 button
@@ -266,6 +270,8 @@ int prepare_light;
    digitalWrite(TOUCH02_VCC_PIN, HIGH); // power ON touch 01 button
   break;
 
+// If button 2 is pressed, and button 1 was active we turn off button 1 (just
+// because of the backlight) and turn on button 2 lights
   case 10:
    if (running_lights==1) {
     digitalWrite(TOUCH01_VCC_PIN, LOW); // power OFF touch 01 button
@@ -275,6 +281,10 @@ int prepare_light;
    digitalWrite(TOUCH01_VCC_PIN, HIGH); // power ON touch 01 button
   break;
 
+
+// In case we pressed second button while the first one was active we will
+// turn off the first button and activate the routine that will light the
+// second action (the other turn signal)
   default:
   case 11:
    switch (running_lights) {
