@@ -15,3 +15,6 @@ front: 2x NeoPixel Quarter 1/40 - 15 leds
 1x switch for lights (## todo ##)
 
 1x switch for hazard lights  (## todo ##)
+
+# physical scheme
+https://www.tinkercad.com/things/bwiDBu2pJe5-minicarlights/
