@@ -68,6 +68,9 @@ void setup() {
  ColorTAILLIGHTS=strip_RL.Color(10,180,10);
  ColorBRAKELIGHT=strip_RL.Color(0,250,0);
 
+// Startup lights
+ StartMeUp();
+
  pinMode(TOUCH01_VCC_PIN, OUTPUT);
  pinMode(TOUCH01_PIN, INPUT);
  digitalWrite(TOUCH01_VCC_PIN, HIGH); // power ON touch 01 button
@@ -77,9 +80,6 @@ void setup() {
  digitalWrite(TOUCH02_VCC_PIN, HIGH); // power ON touch 02 button
 
  running_lights=0;
-
-// Startup lights
- StartMeUp();
 }
 
 void SetBrightness(int Value) {
